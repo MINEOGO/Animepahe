@@ -1,10 +1,11 @@
 import { Card, CardHeader, CardBody, Image, Divider, Chip, Spinner, Button, useDisclosure } from '@nextui-org/react'
+import { useState } from 'react' // <--- THIS WAS MISSING
 import { Prox } from '../utils/ImgProxy'
 import useAxios from '../hooks/useAxios'
 import { ANIME } from '../config/config'
 import { EpisodeResult, FetchedEpisodes } from 'fetch/requests'
-import { Layers } from 'lucide-react' // Import Icon
-import BatchModal from './BatchModal' // Import the new modal
+import { Layers } from 'lucide-react' 
+import BatchModal from './BatchModal' 
 
 interface SearchResultItemProps {
   title: string,
@@ -31,10 +32,9 @@ const SearchResultItem = ({
   
   // Modal State
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [totalPages, setTotalPages] = useState(0); // Store total pages for batch
+  const [totalPages, setTotalPages] = useState(0); 
 
   const FetchEpisodes = async (page: number) => {
-    // ... existing fetch logic ...
     if (fetched_eps[session] === undefined) {
       const response = await request<EpisodeResult>({
         server: ANIME,
