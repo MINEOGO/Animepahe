@@ -52,9 +52,7 @@ const BatchModal = ({ isOpen, onOpenChange, session, title, totalPages }: BatchM
                     });
 
                     // Logic: Grab the highest quality link available (usually the last one is 1080p or 720p)
-                    // You can adjust this filter. Kwik links usually contain audio/resolution in name.
                     if (linkData && Array.isArray(linkData) && linkData.length > 0) {
-                        // Prefer 1080p, fallback to last available
                         const bestLink = linkData.find(l => l.name.includes("1080")) || linkData[linkData.length - 1];
                         return `${ep.episode}: ${bestLink.link}`;
                     }
@@ -80,7 +78,6 @@ const BatchModal = ({ isOpen, onOpenChange, session, title, totalPages }: BatchM
     };
 
     const copyToClipboard = () => {
-        // Extract just the URLs for copy
         const urlList = links.map(l => l.split(': ')[1]).join('\n');
         navigator.clipboard.writeText(urlList);
         toast.success("Copied all links to clipboard!");
