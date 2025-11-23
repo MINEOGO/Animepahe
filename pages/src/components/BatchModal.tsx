@@ -1,4 +1,4 @@
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Progress, Textarea, Snippet } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Progress, Textarea } from "@nextui-org/react";
 import { useState } from "react";
 import useAxios from "../hooks/useAxios";
 import { ANIME } from "../config/config";
