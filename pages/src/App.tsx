@@ -6,34 +6,38 @@ import RainBackground from './components/RainBackground';
 
 const App = () => {
   return (
-    <div className="min-h-screen p-4 relative">
+    <div className="min-h-screen relative">
+      {/* Rain sits at z-0 (defined in css) */}
       <RainBackground />
       
-      {/* Header / Notification */}
-      <div className='flex justify-center mb-8 relative z-10'>
-        <Chip
-          className="glass-panel text-white font-bold border-white/20"
-          variant="bordered"
-          size='lg'
-        >
-          Join our Discord Server! 
-          <Link 
-            className="ml-2 text-cyan-300 font-bold" 
-            underline="hover" 
-            isExternal 
-            showAnchorIcon 
-            href='https://discord.gg/pXj8afWG8A'
+      {/* Content Container: z-10 ensures it floats above rain */}
+      <div className="relative z-10 p-4">
+        {/* Header / Notification */}
+        <div className='flex justify-center mb-8'>
+          <Chip
+            className="glass-panel text-white font-bold border-white/20"
+            variant="bordered"
+            size='lg'
           >
-            Click Here
-          </Link>
-        </Chip>
-      </div>
+            Join our Discord Server! 
+            <Link 
+              className="ml-2 text-cyan-300 font-bold" 
+              underline="hover" 
+              isExternal 
+              showAnchorIcon 
+              href='https://discord.gg/pXj8afWG8A'
+            >
+              Click Here
+            </Link>
+          </Chip>
+        </div>
 
-      {/* Routes */}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/anime/:session" element={<Details />} />
-      </Routes>
+        {/* Routes */}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/anime/:session" element={<Details />} />
+        </Routes>
+      </div>
     </div>
   )
 }
