@@ -12,7 +12,6 @@ const SearchResultItem = ({ data }: SearchResultItemProps) => {
   const { title, episodes, poster, status, type, year, score, session } = data;
 
   const handlePress = () => {
-    // Pass data cleanly to avoid TypeScript property duplication errors
     navigate(`/anime/${session}`, { state: data });
   };
 
@@ -20,39 +19,37 @@ const SearchResultItem = ({ data }: SearchResultItemProps) => {
     <Card 
         isPressable 
         onPress={handlePress} 
-        className="m-2 w-72 h-[500px] glass-panel hover:scale-105 transition-transform duration-200 bg-transparent border-none"
+        className="m-3 w-64 h-[400px] glass-panel transition-all duration-300 bg-transparent border-white/10 group"
+        radius="lg"
     >
-      <CardBody className="p-0 overflow-hidden relative group">
-        {/* Background Image with blur for filling space */}
-        <div 
-            className="absolute inset-0 bg-cover bg-center blur-xl opacity-50" 
-            style={{ backgroundImage: `url(${Prox(poster)})` }}
-        ></div>
-        
+      <CardBody className="p-0 overflow-hidden relative h-full">
         <Image
           removeWrapper
           alt={title}
-          className="z-10 w-full h-full object-cover"
+          className="z-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           src={Prox(poster)}
         />
         
-        {/* Overlay Info on Hover */}
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex flex-col justify-center items-center gap-2 p-4 text-white">
-             <Chip size="sm" color="primary">{type}</Chip>
-             <Chip size="sm" color="secondary">{year}</Chip>
-             {score && <Chip size="sm" color="success">Score: {score}</Chip>}
+        {/* Lighter Gradient Overlay: Only dark at the very bottom */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
+        
+        {/* Floating Info (Top Right) */}
+        <div className="absolute top-2 right-2 z-20 flex flex-col gap-1 items-end">
+             <Chip size="sm" variant="flat" className="bg-black/50 text-white backdrop-blur-md">{type}</Chip>
+             {score && <Chip size="sm" variant="flat" className="bg-green-500/80 text-white backdrop-blur-md">★ {score}</Chip>}
         </div>
+
+        <CardHeader className="absolute bottom-0 z-20 flex-col text-left items-start pb-4 px-4">
+            <h4 className="font-bold text-lg text-white line-clamp-2 text-shadow mb-1">{title}</h4>
+            <div className='flex justify-between w-full items-center opacity-80'>
+                <span className="text-white text-xs font-semibold">{year}</span>
+                <div className="flex gap-2 items-center">
+                    <span className="text-white text-xs">{episodes} eps</span>
+                    <span className={`w-2 h-2 rounded-full ${status === 'Finished' ? 'bg-green-400' : 'bg-blue-400'}`}></span>
+                </div>
+            </div>
+        </CardHeader>
       </CardBody>
-      
-      <CardHeader className="pb-4 pt-4 px-4 flex-col text-left items-start h-auto bg-black/40 backdrop-blur-md border-t border-white/10">
-        <div className='flex justify-between w-full items-center mb-2'>
-          <span className="text-white/70 text-xs font-bold">{episodes} EPS</span>
-          <span className={`text-xs font-bold uppercase px-2 py-1 rounded-md ${status === 'Finished' ? 'bg-green-500/30 text-green-300' : 'bg-blue-500/30 text-blue-300'}`}>
-            {status}
-          </span>
-        </div>
-        <h4 className="font-bold text-lg text-white line-clamp-2 leading-tight text-shadow">{title}</h4>
-      </CardHeader>
     </Card>
   );
 }
