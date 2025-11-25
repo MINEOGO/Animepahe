@@ -8,10 +8,12 @@ interface DownloadModelProps {
   }[],
   isOpen: boolean,
   onOpenChange: () => void,
-  epName: string
+  epName: string,
+  seriesTitle: string,
+  episodeNumber: string
 }
 
-const DownloadModel = ({ isOpen, onOpenChange, links, epName }: DownloadModelProps) => {
+const DownloadModel = ({ isOpen, onOpenChange, links, epName, seriesTitle, episodeNumber }: DownloadModelProps) => {
   return (
     <Modal backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} isKeyboardDismissDisabled={true}>
       <ModalContent>
@@ -20,7 +22,15 @@ const DownloadModel = ({ isOpen, onOpenChange, links, epName }: DownloadModelPro
             <ModalHeader className="flex flex-col gap-1 text-center">{epName}</ModalHeader>
             <ModalBody className='mb-4'>
               {
-                links.map(({ link, name }) => <DownloadListItem key={link} name={name} link={link} />)
+                links.map(({ link, name }) => (
+                  <DownloadListItem 
+                    key={link} 
+                    name={name} 
+                    link={link} 
+                    seriesTitle={seriesTitle}
+                    episodeNumber={episodeNumber}
+                  />
+                ))
               }
             </ModalBody>
           </>
