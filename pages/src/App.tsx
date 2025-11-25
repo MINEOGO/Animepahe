@@ -1,4 +1,4 @@
-import { Routes, Route, Link as RouterLink } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Chip, Link } from '@nextui-org/react';
 import Home from './pages/Home';
 import Details from './pages/Details';
