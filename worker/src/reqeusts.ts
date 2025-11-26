@@ -221,4 +221,13 @@ export class AnimePahe {
 		})
 		return res
 	}
+	
+    public static async airing(page: string, userAgent: string) {
+        const res = await fetch(`https://animepahe.si/api?m=airing&page=${page || 1}`, {
+            headers: AnimePahe.Headers(false, userAgent)
+        }).then(async (data) => {
+            return await data.json<object>()
+        })
+        return res
+    }
 }
