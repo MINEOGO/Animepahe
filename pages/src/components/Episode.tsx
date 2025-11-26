@@ -1,4 +1,5 @@
 import { Card, CardFooter, Image, Button, Spinner, useDisclosure } from "@nextui-org/react";
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Prox } from '../utils/ImgProxy';
 import useAxios from '../hooks/useAxios';
 import { ANIME } from '../config/config';
@@ -11,15 +12,27 @@ interface EpisodeProps {
   session: string,
   episode: string,
   snapshot: string,
-  series: string,
+  series: string, // This is the anime session ID
   seriesname: string,
   linkCache: FetchedEpisodesDlinks
 }
 
 const Episode = ({ episode, session, snapshot, series, seriesname, linkCache }: EpisodeProps) => {
+  const navigate = useNavigate();
   const { isLoading, request } = useAxios()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [dlinks, setDlinks] = useState<DownloadLinks>([])
+
+  const handlePlay = () => {
+    // Navigate to player with state data for smooth transition
+    navigate(`/anime/${series}/${session}/stream`, { 
+        state: { 
+            seriesTitle: seriesname, 
+            episodeNumber: episode,
+            snapshot: snapshot 
+        } 
+    });
+  };
 
   const RequestLinks = async () => {
     if (linkCache[series][session] === undefined) {
@@ -45,7 +58,7 @@ const Episode = ({ episode, session, snapshot, series, seriesname, linkCache }: 
       radius="lg"
       className="m-2 border-none bg-transparent glass-panel w-[300px] group"
     >
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden cursor-pointer" onClick={handlePlay}>
         <Image
             alt="episode"
             className="object-cover w-[300px] h-[170px] transition-transform duration-500 group-hover:scale-110"
@@ -59,7 +72,7 @@ const Episode = ({ episode, session, snapshot, series, seriesname, linkCache }: 
 
       <CardFooter className="justify-between bg-black/40 border-t border-white/10 absolute bottom-0 z-10 w-full">
         <div className="flex flex-col items-start">
-            <p className="text-tiny text-white/60 uppercase font-bold">{seriesname}</p>
+            <p className="text-tiny text-white/60 uppercase font-bold line-clamp-1">{seriesname}</p>
             <p className="text-sm text-white font-bold">Episode {episode}</p>
         </div>
         <Button 
