@@ -22,6 +22,26 @@ declare module 'fetch/requests' {
         "data": SearchItem[]
     }
 
+    // NEW: Airing Items
+    interface AiringItem {
+        "id": number,
+        "anime_id": number,
+        "anime_title": string,
+        "anime_session": string,
+        "episode": number,
+        "snapshot": string,
+        "created_at": string
+        // Add other fields if needed (fansub, disc, etc.)
+    }
+
+    interface AiringResult {
+        "total": number,
+        "per_page": number,
+        "current_page": number,
+        "last_page": number,
+        "data": AiringItem[]
+    }
+
     interface EpisodeResult {
         "title": string,
         "total": number,
@@ -40,7 +60,6 @@ declare module 'fetch/requests' {
         "name": string
     }[]
 
-    // Updated to match your new Worker response
     interface DirectLink {
         "success": boolean,
         "url": string,
