@@ -20,13 +20,13 @@ const App = () => {
             variant="bordered"
             size='lg'
           >
-            Join our Discord Server! 
+            hi subscribe to the creator trust
             <Link 
               className="ml-2 text-cyan-300 font-bold" 
               underline="hover" 
               isExternal 
               showAnchorIcon 
-              href='https://discord.gg/pXj8afWG8A'
+              href='https://youtube.com/@mineogo'
             >
               Click Here
             </Link>
