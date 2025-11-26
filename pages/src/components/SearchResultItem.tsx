@@ -20,7 +20,7 @@ const SearchResultItem = ({ data }: SearchResultItemProps) => {
         isPressable 
         onPress={handlePress} 
         // w-full fills the grid cell. Aspect ratio keeps image proportional.
-        // Mobile height ~240px, Desktop ~400px
+        // Mobile height ~260px, Desktop ~400px
         className="w-full h-[260px] sm:h-[350px] md:h-[400px] glass-panel hover:scale-[1.02] transition-transform duration-200 bg-transparent border-none group shadow-lg"
     >
       <CardBody className="p-0 overflow-hidden relative h-full w-full">
