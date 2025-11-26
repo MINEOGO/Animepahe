@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Chip, Link } from '@nextui-org/react';
 import Home from './pages/Home';
 import Details from './pages/Details';
+import Player from './pages/Player';
 import RainBackground from './components/RainBackground';
 
 const App = () => {
@@ -36,6 +37,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/anime/:session" element={<Details />} />
+          <Route path="/anime/:session/:episode/stream" element={<Player />} />
         </Routes>
       </div>
     </div>
