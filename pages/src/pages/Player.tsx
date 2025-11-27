@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button, Spinner } from '@nextui-org/react';
-import { ArrowLeft, Settings, PictureInPicture } from 'lucide-react'; // Added Icon
+import { ArrowLeft, Settings, PictureInPicture, Download } from 'lucide-react'; // Added Download Icon
 import useAxios from '../hooks/useAxios';
 import { ANIME, KWIK } from '../config/config';
 import { DownloadLinks, DirectLink } from 'fetch/requests';
@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 interface VideoSource {
     quality: string;
     url: string;
+    originalUrl: string; // Keep the original Kwik URL for downloading logic
 }
 
 const Player = () => {
@@ -59,7 +60,8 @@ const Player = () => {
                         const proxyUrl = `${ANIME}/proxy?proxyUrl=${encodeURIComponent(bypass.url)}&modify`;
                         return {
                             quality: item.name,
-                            url: proxyUrl
+                            url: proxyUrl,
+                            originalUrl: bypass.url // Store real direct link for download
                         };
                     }
                     return null;
@@ -72,6 +74,7 @@ const Player = () => {
                 });
 
                 if (resolvedSources.length > 0) {
+                    // Sort by resolution (1080p first)
                     resolvedSources.sort((a, b) => b.quality.localeCompare(a.quality));
                     setSources(resolvedSources);
                     setCurrentSrc(resolvedSources[0].url);
@@ -116,12 +119,33 @@ const Player = () => {
             }
         } catch (error) {
             console.error(error);
-            toast.error("PiP mode not supported or failed.");
+            toast.error("PiP mode not supported.");
         }
     };
 
+    const downloadCurrent = () => {
+        const currentSource = sources.find(s => s.url === currentSrc);
+        if (!currentSource) return;
+
+        // Use the specific naming convention
+        const safeTitle = (meta.seriesTitle || 'Anime').replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_');
+        const epNum = meta.episodeNumber || 'Episode';
+        const fileName = `${safeTitle}_${epNum}_animepahe-26e.pages.dev_.mp4`;
+
+        // Trigger Proxy Download
+        const proxyDownloadUrl = `${ANIME}/proxy?proxyUrl=${encodeURIComponent(currentSource.originalUrl)}&modify&download&filename=${encodeURIComponent(fileName)}`;
+        
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = proxyDownloadUrl;
+        document.body.appendChild(iframe);
+        
+        setTimeout(() => document.body.removeChild(iframe), 60000);
+        toast.success(`Downloading: ${currentSource.quality}`);
+    };
+
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <div className="flex flex-col items-center justify-center min-h-screen p-4 pb-20">
             <div className="w-full max-w-5xl glass-panel p-4 rounded-2xl relative">
                 
                 {/* Header */}
@@ -129,16 +153,16 @@ const Player = () => {
                     <Button 
                         isIconOnly 
                         variant="light" 
-                        className="text-white" 
+                        className="text-white hover:bg-white/10" 
                         onPress={() => navigate(-1)}
                     >
                         <ArrowLeft />
                     </Button>
                     <div>
-                        <h2 className="text-xl font-bold text-white text-shadow">
-                            {meta.seriesTitle || 'Anime'}
+                        <h2 className="text-xl font-bold text-white text-shadow line-clamp-1">
+                            {meta.seriesTitle || 'Anime Player'}
                         </h2>
-                        <p className="text-white/60 text-sm">Episode {meta.episodeNumber || 'Player'}</p>
+                        <p className="text-white/60 text-sm">Episode {meta.episodeNumber || '...'}</p>
                     </div>
                 </div>
 
@@ -147,7 +171,7 @@ const Player = () => {
                     {loading && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-black/80 backdrop-blur-sm">
                             <Spinner size="lg" color="white" />
-                            <p className="text-white mt-4 animate-pulse">{statusText}</p>
+                            <p className="text-white mt-4 animate-pulse font-mono text-sm">{statusText}</p>
                         </div>
                     )}
 
@@ -167,34 +191,45 @@ const Player = () => {
 
                 {/* Controls Bar */}
                 {!loading && sources.length > 0 && (
-                    <div className="flex justify-end mt-4 gap-3">
-                        {/* PiP Button */}
-                        <button
-                            onClick={togglePiP}
-                            className="flex items-center justify-center bg-black/40 hover:bg-white/10 rounded-lg p-2 border border-white/10 text-white/70 hover:text-white transition-colors"
-                            title="Picture in Picture"
+                    <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-3">
+                        
+                        {/* Download Button (Left side on Desktop, Top on mobile flow) */}
+                        <Button
+                            onPress={downloadCurrent}
+                            className="w-full sm:w-auto bg-success/20 hover:bg-success/30 text-success-300 border border-success/20 font-semibold"
+                            startContent={<Download size={18} />}
                         >
-                            <PictureInPicture size={20} />
-                        </button>
+                            Download ({sources.find(s => s.url === currentSrc)?.quality.split(' ')[0] || 'MP4'})
+                        </Button>
 
-                        {/* Quality Selector */}
-                        <div className="flex items-center gap-2 bg-black/40 rounded-lg p-1 px-3 border border-white/10">
-                            <Settings size={16} className="text-white/70" />
-                            <select 
-                                className="bg-transparent text-white text-sm outline-none cursor-pointer py-1"
-                                onChange={handleQualityChange}
-                                value={currentSrc}
+                        <div className="flex w-full sm:w-auto gap-3">
+                            {/* PiP Button */}
+                            <Button
+                                isIconOnly
+                                onPress={togglePiP}
+                                className="bg-white/10 hover:bg-white/20 text-white border border-white/10"
                             >
-                                {sources.map((src) => (
-                                    <option key={src.url} value={src.url} className="text-black">
-                                        {src.quality}
-                                    </option>
-                                ))}
-                            </select>
+                                <PictureInPicture size={20} />
+                            </Button>
+
+                            {/* Quality Selector */}
+                            <div className="flex flex-1 items-center gap-2 bg-white/10 hover:bg-white/15 rounded-xl px-3 border border-white/10 transition-colors">
+                                <Settings size={16} className="text-white/70" />
+                                <select 
+                                    className="bg-transparent text-white text-sm outline-none cursor-pointer py-2 w-full sm:w-auto min-w-[150px]"
+                                    onChange={handleQualityChange}
+                                    value={currentSrc}
+                                >
+                                    {sources.map((src) => (
+                                        <option key={src.url} value={src.url} className="text-black">
+                                            {src.quality}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     </div>
                 )}
-
             </div>
         </div>
     );
