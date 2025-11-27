@@ -15,23 +15,43 @@ interface DownloadModelProps {
 
 const DownloadModel = ({ isOpen, onOpenChange, links, epName, seriesTitle, episodeNumber }: DownloadModelProps) => {
   return (
-    <Modal backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} isKeyboardDismissDisabled={true}>
+    <Modal 
+        backdrop='blur' 
+        isOpen={isOpen} 
+        onOpenChange={onOpenChange} 
+        isDismissable={true} 
+        size="lg"
+        classNames={{
+            base: "bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl",
+            header: "border-b border-white/10",
+            body: "py-6",
+            closeButton: "hover:bg-white/10 active:bg-white/20 text-white"
+        }}
+    >
       <ModalContent>
         {() => (
           <>
-            <ModalHeader className="flex flex-col gap-1 text-center">{epName}</ModalHeader>
-            <ModalBody className='mb-4'>
-              {
-                links.map(({ link, name }) => (
-                  <DownloadListItem 
-                    key={link} 
-                    name={name} 
-                    link={link} 
-                    seriesTitle={seriesTitle}
-                    episodeNumber={episodeNumber}
-                  />
-                ))
-              }
+            <ModalHeader className="flex flex-col gap-1 text-center text-white text-xl font-bold text-shadow">
+                {epName}
+            </ModalHeader>
+            <ModalBody>
+              <div className="flex flex-col gap-1">
+                {
+                    links.length > 0 ? (
+                        links.map(({ link, name }) => (
+                        <DownloadListItem 
+                            key={link} 
+                            name={name} 
+                            link={link} 
+                            seriesTitle={seriesTitle}
+                            episodeNumber={episodeNumber}
+                        />
+                        ))
+                    ) : (
+                        <p className="text-center text-white/50 py-4">No links available.</p>
+                    )
+                }
+              </div>
             </ModalBody>
           </>
         )}
